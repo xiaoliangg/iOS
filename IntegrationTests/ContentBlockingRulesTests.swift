@@ -26,6 +26,8 @@ class ContentBlockingRulesTests: XCTestCase {
     func test() throws {
         let url = AppUrls(statisticsStore: MockStatisticsStore()).trackerDataSet
         let data = try Data(contentsOf: url)
+//        let stringValue = String(decoding: data, as: UTF8.self)
+//        print(data.Base64DecodingOptions)
         let trackerData = try JSONDecoder().decode(TrackerData.self, from: data)
         
         let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
