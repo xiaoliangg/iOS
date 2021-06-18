@@ -20,35 +20,32 @@
 import XCTest
 @testable import TrackerRadarKit
 @testable import Core
+import Foundation
 
 class DomainMatching: XCTestCase {
     private var data = JsonTestDataLoader()
 
     func test() throws {
-//        let url = AppUrls(statisticsStore: MockStatisticsStore()).trackerDataSet
-//        let data = try Data(contentsOf: url)
-
-//        do {
-//            if let bundlePath = Bundle.main.path(forResource: ",
-//                                                 ofType: "json"),
-//                let jsonData = try String(contentsOfFile: bundlePath).data(using: .utf8) {
-//                return jsonData
-//            }
-//        } catch {
-//            print(error)
-//        }
-
         let trackerJSON = data.fromJsonFile("MockFiles/TR_reference.json")
         let stringValue = String(decoding: trackerJSON, as: UTF8.self)
         print(stringValue)
                 
         let trackerData = try JSONDecoder().decode(TrackerData.self, from: trackerJSON)
-//
-//        let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
-//        andTemporaryUnprotectedDomains: [])
-//
-//        // Test tracker is set up to be blocked
-//        if let rule = rules.findExactFilter(filter: "^(https?)?(wss?)?://([a-z0-9-]+\\.)*googleadservices\\.com(:?[0-9]+)?/.*") {
+
+        let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
+        andTemporaryUnprotectedDomains: [])
+
+//        rules[0].matches(URL("https://bad.third-party.site/"), URL("https://bad.third-party.site/"), "script"))
+
+        let testRule = "^(https?)?(wss?)?://([a-z0-9-]+\\.)*bad\\.third-party\\.site"
+        let testDomain = "https://bad.third-party.site/test"
+        let testURL = URL(string: "https://bad.third-party.site/test")
+        let range = testDomain.range(of: testRule, options: .regularExpression)
+
+        let rule = rules.matchURL(url: testDomain, topLevel: testURL!)
+        print(rule)
+        // Test tracker is set up to be blocked
+//        if rule != nil {
 //            XCTAssert(rule.action == .block())
 //        } else {
 //            XCTFail("Missing google ad services rule")
@@ -65,8 +62,22 @@ class DomainMatching: XCTestCase {
 }
 
 extension Array where Element == ContentBlockerRule {
-    func findExactFilter(filter: String) -> ContentBlockerRule? {
-        for rule in self where rule.trigger.urlFilter == filter {
+    func matchURL(url: String, topLevel: URL) -> ContentBlockerRule? {
+        for rule in self where url.range(of: rule.trigger.urlFilter, options: .regularExpression) != nil
+            && rule.trigger.urlFilter != ".*" {
+            if rule.trigger.ifDomain!.count == 0 || rule.trigger.ifDomain!.contains(topLevel.host!) {
+                return rule
+            }
+            // ifDomain
+            // unless domain
+            //  resource type
+        }
+        
+        return nil
+    }
+
+    func findExactFilter(url: String) -> ContentBlockerRule? {
+        for rule in self where rule.trigger.urlFilter == url {
             return rule
         }
         
@@ -84,4 +95,6 @@ extension Array where Element == ContentBlockerRule {
         
         return nil
     }
+    
+    
 }
