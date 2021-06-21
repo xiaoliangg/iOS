@@ -1,6 +1,7 @@
 {
     "trackers": {
         "bad.third-party.site": {
+            "domain": "bad.third-party.site",
             "owner": {
                 "name": "Test Site for Tracker Blocking",
                 "displayName": "Bad Third Party Site",
@@ -31,6 +32,7 @@
             ]
         },
         "broken.third-party.site": {
+            "domain": "broken.third-party.site",
             "owner": {
                 "name": "Test Site for Tracker Blocking",
                 "displayName": "Broken Third Party Site",
@@ -45,6 +47,7 @@
             "default": "ignore"
         },
         "tracker.test": {
+            "domain": "tracker.test",
             "owner": {
                 "name": "Test Site for Tracker Blocking",
                 "displayName": "Bad Third Party Site",
@@ -58,6 +61,7 @@
             "default": "block"
         },
         "ignore.test": {
+            "domain": "ignore.test",
             "owner": {
                 "name": "Test Site for Tracker Blocking",
                 "displayName": "ignore Site",

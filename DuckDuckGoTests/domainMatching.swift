@@ -22,15 +22,44 @@ import XCTest
 @testable import Core
 import Foundation
 
+struct RefTests: Decodable {
+    
+    struct Test: Decodable {
+        
+        let name: String
+        let siteURL: String
+        let requestUrl: String
+        let requestType: String
+        let expectAction: String?
+        let exceptPlatforms: [String]?
+        
+    }
+    
+    struct DomainTests: Decodable {
+        
+        let name: String
+        let desc: String
+        let tests: [Test]
+        
+    }
+    
+    let domainTests: DomainTests
+}
+
 class DomainMatching: XCTestCase {
     private var data = JsonTestDataLoader()
 
     func test() throws {
         let trackerJSON = data.fromJsonFile("MockFiles/TR_reference.json")
-        let stringValue = String(decoding: trackerJSON, as: UTF8.self)
-        print(stringValue)
-                
+        let testJSON = data.fromJsonFile("MockFiles/domain_reference_tests.json")
+
+        let s1 = String(decoding: trackerJSON, as: UTF8.self)
+        print(s1)
         let trackerData = try JSONDecoder().decode(TrackerData.self, from: trackerJSON)
+        
+        let s2 = String(decoding: testJSON, as: UTF8.self)
+        print(s2)
+        let tests = try JSONDecoder().decode(RefTests.self, from: testJSON)
 
         let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
         andTemporaryUnprotectedDomains: [])
@@ -65,7 +94,8 @@ extension Array where Element == ContentBlockerRule {
     func matchURL(url: String, topLevel: URL) -> ContentBlockerRule? {
         for rule in self where url.range(of: rule.trigger.urlFilter, options: .regularExpression) != nil
             && rule.trigger.urlFilter != ".*" {
-            if rule.trigger.ifDomain!.count == 0 || rule.trigger.ifDomain!.contains(topLevel.host!) {
+            if rule.trigger.ifDomain == nil || rule.trigger.ifDomain!.contains(topLevel.host!) {
+//                if rule.trigger.unlessDomain == nil
                 return rule
             }
             // ifDomain
