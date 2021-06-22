@@ -70,8 +70,8 @@ class DomainMatching: XCTestCase {
             let testURL = URL(string: test.siteURL)
             let rule = rules.matchURL(url: test.requestURL, topLevel: testURL!)
             let result = rule?.action
-            print(rule)
-            print("***", test.expectAction, result?.type)
+            print("Matching rule", rule)
+            print(test.expectAction, "==?", result?.type)
             if rule != nil {
                 XCTAssert(test.expectAction == "block" && result == .block())
             } else {
