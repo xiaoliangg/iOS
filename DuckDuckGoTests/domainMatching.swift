@@ -28,7 +28,7 @@ struct RefTests: Decodable {
         
         let name: String
         let siteURL: String
-        let requestUrl: String
+        let requestURL: String
         let requestType: String
         let expectAction: String?
         let exceptPlatforms: [String]?
@@ -53,41 +53,32 @@ class DomainMatching: XCTestCase {
         let trackerJSON = data.fromJsonFile("MockFiles/TR_reference.json")
         let testJSON = data.fromJsonFile("MockFiles/domain_reference_tests.json")
 
-        let s1 = String(decoding: trackerJSON, as: UTF8.self)
-        print(s1)
+//        let s1 = String(decoding: trackerJSON, as: UTF8.self)
+//        print(s1)
         let trackerData = try JSONDecoder().decode(TrackerData.self, from: trackerJSON)
         
-        let s2 = String(decoding: testJSON, as: UTF8.self)
-        print(s2)
-        let tests = try JSONDecoder().decode(RefTests.self, from: testJSON)
+//        let s2 = String(decoding: testJSON, as: UTF8.self)
+//        print(s2)
+        let refTests = try JSONDecoder().decode(RefTests.self, from: testJSON)
+        let tests = refTests.domainTests.tests
 
         let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
         andTemporaryUnprotectedDomains: [])
 
-//        rules[0].matches(URL("https://bad.third-party.site/"), URL("https://bad.third-party.site/"), "script"))
-
-        let testRule = "^(https?)?(wss?)?://([a-z0-9-]+\\.)*bad\\.third-party\\.site"
-        let testDomain = "https://bad.third-party.site/test"
-        let testURL = URL(string: "https://bad.third-party.site/test")
-        let range = testDomain.range(of: testRule, options: .regularExpression)
-
-        let rule = rules.matchURL(url: testDomain, topLevel: testURL!)
-        print(rule)
-        // Test tracker is set up to be blocked
-//        if rule != nil {
-//            XCTAssert(rule.action == .block())
-//        } else {
-//            XCTFail("Missing google ad services rule")
-//        }
-//
-//        // Test exceptiions are set to ignore previous rules
-//        if let rule = rules.findInIfDomain(domain: "duckduckgo.com") {
-//            XCTAssert(rule.action == .ignorePreviousRules())
-//        } else {
-//            XCTFail("Missing domain exception")
-//        }
+        for test in tests {
+            print(test)
+            let testURL = URL(string: test.siteURL)
+            let rule = rules.matchURL(url: test.requestURL, topLevel: testURL!)
+            let result = rule?.action
+            print(rule)
+            print("***", test.expectAction, result?.type)
+            if rule != nil {
+                XCTAssert(test.expectAction == "block" && result == .block())
+            } else {
+                XCTAssert(test.expectAction == "ignore" || test.expectAction == nil)
+            }
+        }
     }
-
 }
 
 extension Array where Element == ContentBlockerRule {
@@ -95,8 +86,10 @@ extension Array where Element == ContentBlockerRule {
         for rule in self where url.range(of: rule.trigger.urlFilter, options: .regularExpression) != nil
             && rule.trigger.urlFilter != ".*" {
             if rule.trigger.ifDomain == nil || rule.trigger.ifDomain!.contains(topLevel.host!) {
-//                if rule.trigger.unlessDomain == nil
-                return rule
+                let host = "*" + topLevel.host!
+                if rule.trigger.unlessDomain == nil || !rule.trigger.unlessDomain!.contains(host) {
+                    return rule
+                }
             }
             // ifDomain
             // unless domain
