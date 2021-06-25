@@ -50,74 +50,40 @@ class DomainMatching: XCTestCase {
     private var data = JsonTestDataLoader()
 
     func test() throws {
-        let trackerJSON = data.fromJsonFile("MockFiles/TR_reference.json")
-        let testJSON = data.fromJsonFile("MockFiles/domain_reference_tests.json")
+        let trackerJSON = data.fromJsonFile("MockFiles/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json")
+        let testJSON = data.fromJsonFile("MockFiles/reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json")
 
-//        let s1 = String(decoding: trackerJSON, as: UTF8.self)
-//        print(s1)
         let trackerData = try JSONDecoder().decode(TrackerData.self, from: trackerJSON)
         
-//        let s2 = String(decoding: testJSON, as: UTF8.self)
-//        print(s2)
         let refTests = try JSONDecoder().decode(RefTests.self, from: testJSON)
         let tests = refTests.domainTests.tests
 
         let rules = ContentBlockerRulesBuilder(trackerData: trackerData).buildRules(withExceptions: ["duckduckgo.com"],
-        andTemporaryUnprotectedDomains: [])
+                andTemporaryUnprotectedDomains: [])
 
         for test in tests {
-            print(test)
-            let testURL = URL(string: test.siteURL)
-            let rule = rules.matchURL(url: test.requestURL, topLevel: testURL!)
+            print("TEST: ", test.name)
+            let requestURL = URL(string: test.requestURL)
+            let siteURL = URL(string: test.siteURL)
+            let requestType = ContentBlockerRulesBuilder.resourceMapping[test.requestType]
+            let rule = rules.matchURL(url: requestURL!, topLevel: siteURL!, resourceType: requestType!)
             let result = rule?.action
-            print("Matching rule", rule)
-            print(test.expectAction, "==?", result?.type)
-            if rule != nil {
-                XCTAssert(test.expectAction == "block" && result == .block())
+            if test.expectAction == "block" {
+                XCTAssert(result == .block())
             } else {
-                XCTAssert(test.expectAction == "ignore" || test.expectAction == nil)
+                XCTAssert(result == nil || result == .ignorePreviousRules())
             }
         }
     }
 }
 
 extension Array where Element == ContentBlockerRule {
-    func matchURL(url: String, topLevel: URL) -> ContentBlockerRule? {
-        for rule in self where url.range(of: rule.trigger.urlFilter, options: .regularExpression) != nil
-            && rule.trigger.urlFilter != ".*" {
-            if rule.trigger.ifDomain == nil || rule.trigger.ifDomain!.contains(topLevel.host!) {
-                let host = "*" + topLevel.host!
-                if rule.trigger.unlessDomain == nil || !rule.trigger.unlessDomain!.contains(host) {
-                    return rule
-                }
-            }
-            // ifDomain
-            // unless domain
-            //  resource type
+    func matchURL(url: URL, topLevel: URL, resourceType: ContentBlockerRule.Trigger.ResourceType) -> ContentBlockerRule? {
+        var result: ContentBlockerRule?
+        for rule in self where rule.matches(resourceUrl: url, onPageWithUrl: topLevel, ofType: resourceType) {
+            result = rule
         }
         
-        return nil
+        return result
     }
-
-    func findExactFilter(url: String) -> ContentBlockerRule? {
-        for rule in self where rule.trigger.urlFilter == url {
-            return rule
-        }
-        
-        return nil
-    }
-    
-    func findInIfDomain(domain: String) -> ContentBlockerRule? {
-        for rule in self {
-            if let ifDomain = rule.trigger.ifDomain {
-                for url in ifDomain where url == domain {
-                    return rule
-                }
-            }
-        }
-        
-        return nil
-    }
-    
-    
 }
