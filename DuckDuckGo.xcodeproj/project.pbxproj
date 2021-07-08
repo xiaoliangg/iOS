@@ -212,6 +212,7 @@
 		8588026624E420BD00C24AB6 /* LargeOmniBarStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8588026424E4209900C24AB6 /* LargeOmniBarStateTests.swift */; };
 		8588026A24E424EE00C24AB6 /* AppWidthObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8588026824E424AF00C24AB6 /* AppWidthObserverTests.swift */; };
 		8589CF2624AE075F006C6457 /* UIImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850365F223DE087800D0F787 /* UIImageViewExtension.swift */; };
+		858C1BE4269710D100E6C014 /* WebDataDebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858C1BE3269710D100E6C014 /* WebDataDebugViewController.swift */; };
 		8590CB612684D0600089F6BF /* CookieDebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8590CB602684D0600089F6BF /* CookieDebugViewController.swift */; };
 		8590CB632684F10F0089F6BF /* ContentBlockerProtectionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8590CB622684F10F0089F6BF /* ContentBlockerProtectionStoreTests.swift */; };
 		8590CB67268A2E520089F6BF /* RootDebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8590CB66268A2E520089F6BF /* RootDebugViewController.swift */; };
@@ -936,6 +937,7 @@
 		8586A10F24CCCD040049720E /* TabsBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabsBarViewController.swift; sourceTree = "<group>"; };
 		8588026424E4209900C24AB6 /* LargeOmniBarStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeOmniBarStateTests.swift; sourceTree = "<group>"; };
 		8588026824E424AF00C24AB6 /* AppWidthObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWidthObserverTests.swift; sourceTree = "<group>"; };
+		858C1BE3269710D100E6C014 /* WebDataDebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDataDebugViewController.swift; sourceTree = "<group>"; };
 		8590CB602684D0600089F6BF /* CookieDebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieDebugViewController.swift; sourceTree = "<group>"; };
 		8590CB622684F10F0089F6BF /* ContentBlockerProtectionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBlockerProtectionStoreTests.swift; sourceTree = "<group>"; };
 		8590CB66268A2E520089F6BF /* RootDebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootDebugViewController.swift; sourceTree = "<group>"; };
@@ -2663,6 +2665,7 @@
 				858566FA252E55D6007501B8 /* ImageCacheDebugViewController.swift */,
 				8590CB66268A2E520089F6BF /* RootDebugViewController.swift */,
 				8590CB68268A4E190089F6BF /* DebugEtagStorage.swift */,
+				858C1BE3269710D100E6C014 /* WebDataDebugViewController.swift */,
 			);
 			name = Debug;
 			sourceTree = "<group>";
@@ -4811,6 +4814,7 @@
 				8524CC94246C5C8900E59D45 /* DaxDialogViewController.swift in Sources */,
 				85200F971FBB31E8001AF290 /* SiteRatingPrivacyProtectionExtension.swift in Sources */,
 				F42EF9312614BABE00101FB9 /* ActionSheetDaxDialogViewController.swift in Sources */,
+				858C1BE4269710D100E6C014 /* WebDataDebugViewController.swift in Sources */,
 				F13B4BC01F180D8A00814661 /* TabsModel.swift in Sources */,
 				85AE6690209724120014CF04 /* NotificationView.swift in Sources */,
 				980891A92238504B00313A70 /* UILabelExtension.swift in Sources */,

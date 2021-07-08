@@ -84,12 +84,15 @@ class DiagnosticReportDataSource: UIActivityItemProvider {
     override var item: Any {
         delegate?.dataGatheringStarted()
 
-        let report = [reportHeader(),
-                      tabsReport(),
-                      imageCacheReport(),
-                      fireproofingReport(),
-                      configurationReport(),
-                      cookiesReport()].joined(separator: "\n\n")
+        let report = [
+            reportHeader(),
+            tabsReport(),
+            imageCacheReport(),
+            fireproofingReport(),
+            configurationReport(),
+            cookiesReport(),
+            webDataReport()
+        ].joined(separator: "\n\n")
 
         delegate?.dataGatheringComplete()
         return report
@@ -165,6 +168,29 @@ class DiagnosticReportDataSource: UIActivityItemProvider {
         ### Tabs Report
         Tabs: \(TabsModel.get()?.count ?? -1)
         """
+    }
+
+    func webDataReport() -> String {
+        """
+        ### Web Data Report
+        \(webData())
+        """
+    }
+
+    func webData() -> String {
+        var result = ""
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.main.async {
+            WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                result = records.map { "\($0.displayName)[\($0.dataTypes.map { $0 }.joined(separator: ", "))]" }.joined(separator: "\n")
+                group.leave()
+            }
+        }
+        if group.wait(timeout: .now() + 10) == .timedOut {
+            return "Failed to retrieve data in 10 seconds"
+        }
+        return result
     }
 
 }

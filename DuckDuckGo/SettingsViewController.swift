@@ -196,7 +196,7 @@ class SettingsViewController: UITableViewController {
 
     private func showDebug() {
         // Use the "AdhocDebug" scheme when archiving to create a compatible adhoc build
-        guard isDebugBuild else { return }
+        // guard isDebugBuild else { return }
         performSegue(withIdentifier: "Debug", sender: nil)
     }
 
