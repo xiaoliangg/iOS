@@ -18,9 +18,18 @@
 //
 
 import WebKit
+import os.log
 
 extension WKWebViewConfiguration {
-        
+
+    private static var sharedProcessPool = WKProcessPool()
+
+    public static func regenerateProcessPool() {
+        os_log("Regenerating WKProcessPool", log: webviewLog, type: .debug)
+        sharedProcessPool = WKProcessPool()
+        os_log("Regenerated WKProcessPool", log: webviewLog, type: .debug)
+    }
+
     public static func persistent() -> WKWebViewConfiguration {
         return configuration(persistsData: true)
     }
@@ -30,6 +39,7 @@ extension WKWebViewConfiguration {
     }
     
     private static func configuration(persistsData: Bool) -> WKWebViewConfiguration {
+        os_log("Creating new WKWebViewConfiguration", log: webviewLog, type: .debug)
         let configuration = WKWebViewConfiguration()
         if !persistsData {
             configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
@@ -42,6 +52,9 @@ extension WKWebViewConfiguration {
         configuration.allowsInlineMediaPlayback = true
         configuration.allowsPictureInPictureMediaPlayback = true
         configuration.ignoresViewportScaleLimits = true
+        configuration.processPool = sharedProcessPool
+
+        os_log("Created new WKWebViewConfiguration", log: webviewLog, type: .debug)
 
         return configuration
     }

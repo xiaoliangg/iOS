@@ -18,6 +18,7 @@
 //
 
 import WebKit
+import os.log
 
 public protocol WebCacheManagerCookieStore {
     
@@ -87,7 +88,6 @@ public class WebCacheManager {
     public func removeCookies(forDomains domains: [String],
                               dataStore: WebCacheManagerDataStore = WKWebsiteDataStore.default(),
                               completion: @escaping () -> Void) {
-
         guard let cookieStore = dataStore.cookieStore else {
             completion()
             return
@@ -124,14 +124,19 @@ public class WebCacheManager {
     public func clear(dataStore: WebCacheManagerDataStore = WKWebsiteDataStore.default(),
                       logins: PreserveLogins = PreserveLogins.shared,
                       completion: @escaping () -> Void) {
+        os_log("%s: Beginning to clear data", log: webviewLog, type: .debug, #function)
 
         dataStore.removeAllDataExceptCookies {
+            os_log("%s: Cleared all data except cookies, now fetching cookies", log: webviewLog, type: .debug, #function)
+
             guard let cookieStore = dataStore.cookieStore else {
                 completion()
                 return
             }
 
             cookieStore.getAllCookies { cookies in
+                os_log("%s: Fetched cookies", log: webviewLog, type: .debug, #function)
+
                 let group = DispatchGroup()
                 let cookiesToRemove = cookies.filter { !logins.isAllowed(cookieDomain: $0.domain) && $0.domain != Constants.cookieDomain }
 
@@ -144,6 +149,8 @@ public class WebCacheManager {
 
                 DispatchQueue.global(qos: .userInitiated).async {
                     let result = group.wait(timeout: .now() + 5)
+
+                    os_log("%s: Deleted cookies", log: webviewLog, type: .debug, #function)
 
                     if result == .timedOut {
                         Pixel.fire(pixel: .cookieDeletionTimedOut, withAdditionalParameters: [

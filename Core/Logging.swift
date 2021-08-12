@@ -20,5 +20,10 @@
 import Foundation
 import os.log
 
-public let generalLog: OSLog = OSLog(subsystem: Bundle.main.bundleIdentifier ?? AppVersion.shared.identifier, category: "DDG General")
-public let lifecycleLog: OSLog = OSLog(subsystem: Bundle.main.bundleIdentifier ?? AppVersion.shared.identifier, category: "DDG Lifecycle")
+// OSLog(subsystem: Bundle.main.bundleIdentifier ?? AppVersion.shared.identifier, category: "DDG General")
+public let generalLog: OSLog = OSLog.disabled
+
+// OSLog(subsystem: Bundle.main.bundleIdentifier ?? AppVersion.shared.identifier, category: "DDG Lifecycle")
+public let lifecycleLog: OSLog = OSLog.disabled
+
+public let webviewLog: OSLog = OSLog(subsystem: Bundle.main.bundleIdentifier ?? AppVersion.shared.identifier, category: "DDG WebView")
