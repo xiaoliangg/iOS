@@ -39,7 +39,7 @@ extension WKWebViewConfiguration {
     }
     
     private static func configuration(persistsData: Bool) -> WKWebViewConfiguration {
-        os_log("Creating new WKWebViewConfiguration", log: webviewLog, type: .debug)
+        os_log("Creating new WKWebViewConfiguration using pool %@", log: webviewLog, type: .debug, sharedProcessPool)
         let configuration = WKWebViewConfiguration()
         if !persistsData {
             configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
@@ -54,7 +54,7 @@ extension WKWebViewConfiguration {
         configuration.ignoresViewportScaleLimits = true
         configuration.processPool = sharedProcessPool
 
-        os_log("Created new WKWebViewConfiguration", log: webviewLog, type: .debug)
+        os_log("Created new WKWebViewConfiguration using pool %@", log: webviewLog, type: .debug, sharedProcessPool)
 
         return configuration
     }
@@ -64,7 +64,8 @@ extension WKWebViewConfiguration {
             self.userContentController.add(rules)
         }
         
-        if let rules = ContentBlockerRulesManager.shared.currentRules {
+        if let rules = ContentBlockerRulesManager.shared.currentRules,
+           PrivacyConfigurationManager.shared.privacyConfig.isEnabled(featureKey: .contentBlocking) {
             addRulesToController(rules: rules.rulesList)
         }
     }

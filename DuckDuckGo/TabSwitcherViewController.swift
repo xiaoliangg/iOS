@@ -275,11 +275,7 @@ class TabSwitcherViewController: UIViewController {
 
     @IBAction func onAddPressed(_ sender: UIBarButtonItem) {
         delegate.tabSwitcherDidRequestNewTab(tabSwitcher: self)
-        
-        // Delay dismissal so new tab inertion can be animated.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.dismiss()
-        }
+        dismiss()
     }
 
     @IBAction func onDonePressed(_ sender: UIBarButtonItem) {
@@ -300,7 +296,6 @@ class TabSwitcherViewController: UIViewController {
         Pixel.fire(pixel: .forgetAllPressedTabSwitching)
         
         if DaxDialogs.shared.shouldShowFireButtonPulse {
-            Pixel.fire(pixel: .fireEducationFireButtonOnTabSwitcherScreenPressedWhilstPulseShowing)
             let spec = DaxDialogs.shared.fireButtonEducationMessage()
             performSegue(withIdentifier: "ActionSheetDaxDialog", sender: spec)
         } else {

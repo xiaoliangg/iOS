@@ -22,6 +22,7 @@ import WebKit
 import Core
 import Lottie
 import Kingfisher
+import os
 
 // swiftlint:disable type_body_length
 // swiftlint:disable file_length
@@ -481,7 +482,8 @@ class MainViewController: UIViewController {
         currentTab?.dismiss()
         removeHomeScreen()
 
-        let controller = HomeViewController.loadFromStoryboard()
+        let tabModel = currentTab?.tabModel
+        let controller = HomeViewController.loadFromStoryboard(model: tabModel!)
         homeController = controller
 
         controller.chromeDelegate = self
@@ -502,7 +504,6 @@ class MainViewController: UIViewController {
         Pixel.fire(pixel: .forgetAllPressedBrowsing)
         
         if let spec = DaxDialogs.shared.fireButtonEducationMessage() {
-            Pixel.fire(pixel: .fireEducationFireButtonPressedWhilstPulseShowing)
             performSegue(withIdentifier: "ActionSheetDaxDialog", sender: spec)
         } else {
             let alert = ForgetDataAlert.buildAlert(forgetTabsAndDataHandler: { [weak self] in
@@ -889,6 +890,17 @@ class MainViewController: UIViewController {
         tabsBarController?.refresh(tabsModel: tabManager.model)
     }
     
+    func animateLogoAppearance() {
+        logoContainer.alpha = 0
+        logoContainer.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            UIView.animate(withDuration: 0.2) {
+                self.logoContainer.alpha = 1
+                self.logoContainer.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            }
+        }
+    }
+    
     func updateFindInPage() {
         currentTab?.findInPage?.delegate = self
         findInPageView.update(with: currentTab?.findInPage, updateTextField: true)
@@ -933,10 +945,6 @@ extension MainViewController: BrowserChromeDelegate {
         if percent < 1 {
             hideKeyboard()
             hideMenuHighlighter()
-
-            if DaxDialogs.shared.shouldShowFireButtonPulse {
-                return
-            }
         } else {
             showMenuHighlighterIfNeeded()
         }
@@ -966,6 +974,10 @@ extension MainViewController: BrowserChromeDelegate {
         omniBar.alpha = hidden ? 0 : 1
         tabsBar.alpha = hidden ? 0 : 1
         statusBarBackground.alpha = hidden ? 0 : 1
+    }
+    
+    var canHideBars: Bool {
+        return !DaxDialogs.shared.shouldShowFireButtonPulse
     }
 
     var isToolbarHidden: Bool {
@@ -1397,6 +1409,7 @@ extension MainViewController: TabSwitcherDelegate {
 
     func tabSwitcherDidRequestNewTab(tabSwitcher: TabSwitcherViewController) {
         newTab()
+        animateLogoAppearance()
     }
 
     func tabSwitcher(_ tabSwitcher: TabSwitcherViewController, didSelectTab tab: Tab) {
@@ -1504,7 +1517,7 @@ extension MainViewController: GestureToolbarButtonDelegate {
 }
 
 extension MainViewController: AutoClearWorker {
-    
+
     func clearNavigationStack() {
         dismissOmniBar()
         dismissBrowsingMenu()
@@ -1521,19 +1534,22 @@ extension MainViewController: AutoClearWorker {
         findInPageView?.done()
         tabManager.removeAll()
         showBars()
-        attachHomeScreen()
+
         tabsBarController?.refresh(tabsModel: tabManager.model)
         Favicons.shared.clearCache(.tabs)
     }
     
-    func forgetData() {
-        findInPageView?.done()
-        
+    func forgetData(completion: (() -> Void)?) {
+        os_log("%s: Beginning forgetData", log: webviewLog, type: .debug, #function)
+
         ServerTrustCache.shared.clear()
+        URLSession.shared.configuration.urlCache?.removeAllCachedResponses()
 
         let pixel = TimedPixel(.forgetAllDataCleared)
         WebCacheManager.shared.clear {
             pixel.fire(withAdditionalParmaeters: [PixelParameters.tabCount: "\(self.tabManager.count)"])
+            os_log("%s: Finished forgetData", log: webviewLog, type: .debug, #function)
+            completion?()
         }
     }
     
@@ -1542,9 +1558,17 @@ extension MainViewController: AutoClearWorker {
         Pixel.fire(pixel: .forgetAllExecuted)
         
         fireButtonAnimator?.animate {
-            self.forgetData()
-            DaxDialogs.shared.resumeRegularFlow()
             self.forgetTabs()
+            WKWebViewConfiguration.regenerateProcessPool()
+
+            self.forgetData {
+                DispatchQueue.main.async {
+                    self.attachHomeScreen()
+                    self.findInPageView?.done()
+                }
+            }
+
+            DaxDialogs.shared.resumeRegularFlow()
         } onTransitionCompleted: {
             ActionMessageView.present(message: UserText.actionForgetAllDone)
             transitionCompletion?()

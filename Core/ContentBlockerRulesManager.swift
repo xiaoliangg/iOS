@@ -22,6 +22,7 @@ import WebKit
 import os.log
 import TrackerRadarKit
 
+// swiftlint:disable type_body_length
 public class ContentBlockerRulesManager {
     
     public typealias CompletionBlock = (WKContentRuleList?) -> Void
@@ -230,17 +231,22 @@ public class ContentBlockerRulesManager {
                 // We failed compilation for non-embedded TDS, marking as broken.
                 etagForFailedTDSCompilation = tdsEtag
                 Pixel.fire(pixel: .contentBlockingTDSCompilationFailed,
+                           error: error,
                            withAdditionalParameters: [PixelParameters.etag: tdsEtag])
             } else if tempListEtag != nil {
                 etagForFailedTempListCompilation = tempListEtag
                 Pixel.fire(pixel: .contentBlockingTempListCompilationFailed,
+                           error: error,
                            withAdditionalParameters: [PixelParameters.etag: tempListEtag ?? "empty"])
             } else if !unprotectedSitesHash.isEmpty {
                 hashForFailedUnprotectedSitesCompilation = unprotectedSitesHash
-                Pixel.fire(pixel: .contentBlockingUnpSitesCompilationFailed)
+                Pixel.fire(pixel: .contentBlockingUnpSitesCompilationFailed,
+                           error: error)
             } else {
                 // We failed for embedded data, this is unlikely.
-                Pixel.fire(pixel: .contentBlockingFallbackCompilationFailed)
+                Pixel.fire(pixel: .contentBlockingFallbackCompilationFailed) { _ in
+                    fatalError("Could not compile embedded rules list")
+                }
             }
         }
         
@@ -253,13 +259,46 @@ public class ContentBlockerRulesManager {
     }
     // swiftlint:enable function_parameter_count
     
+    static func extractSurrogates(from tds: TrackerData) -> TrackerData {
+        
+        let trackers = tds.trackers.filter { pair in
+            return pair.value.rules?.first(where: { rule in
+                rule.surrogate != nil
+            }) != nil
+        }
+        
+        var domains = [TrackerData.TrackerDomain: TrackerData.EntityName]()
+        var entities = [TrackerData.EntityName: Entity]()
+        for tracker in trackers {
+            if let entityName = tds.domains[tracker.key] {
+                domains[tracker.key] = entityName
+                entities[entityName] = tds.entities[entityName]
+            }
+        }
+        
+        var cnames = [TrackerData.CnameDomain: TrackerData.TrackerDomain]()
+        if let tdsCnames = tds.cnames {
+            for pair in tdsCnames {
+                for domain in domains.keys {
+                    if pair.value.hasSuffix(domain) {
+                        cnames[pair.key] = pair.value
+                        break
+                    }
+                }
+            }
+        }
+        
+        return TrackerData(trackers: trackers, entities: entities, domains: domains, cnames: cnames)
+    }
+    
     private func compilationSucceeded(with ruleList: WKContentRuleList,
                                       trackerData: TrackerData,
                                       etag: String,
                                       identifier: ContentBlockerRulesIdentifier) {
         os_log("Rules compiled", log: generalLog, type: .default)
         
-        let encodedData = try? JSONEncoder().encode(trackerData)
+        let surrogateTDS = Self.extractSurrogates(from: trackerData)
+        let encodedData = try? JSONEncoder().encode(surrogateTDS)
         let encodedTrackerData = String(data: encodedData!, encoding: .utf8)!
         
         lock.lock()
@@ -311,6 +350,7 @@ public class ContentBlockerRulesManager {
     }
 
 }
+// swiftlint:enable type_body_length
 
 extension ContentBlockerRulesManager {
     

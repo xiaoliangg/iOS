@@ -134,12 +134,6 @@ public enum PixelName: String {
     case daxDialogsFireEducationShown = "m_dx_fe_s"
     case daxDialogsFireEducationConfirmed = "m_dx_fe_co"
     case daxDialogsFireEducationCancelled = "m_dx_fe_ca"
-    case daxDialogsFireEducationCancelledOutsideOfButton = "m_dx_fe_ca_o"
-    case fireEducationPulseShown = "m_fe_p_s"
-    case fireEducationPulseCancelledBecauseTabOpened = "m_fe_p_c_ta"
-    case fireEducationPulseCancelledBecauseTimeout = "m_fe_p_c_to"
-    case fireEducationFireButtonPressedWhilstPulseShowing = "m_fe_p_b"
-    case fireEducationFireButtonOnTabSwitcherScreenPressedWhilstPulseShowing = "m_fe_p_ts_b"
     
     case widgetFavoriteLaunch = "m_w_fl"
     case widgetNewSearch = "m_w_ns"
@@ -179,6 +173,9 @@ public enum PixelName: String {
     case trackerDataReloadFailed = "m_d_tds_r"
     case trackerDataCouldNotBeLoaded = "m_d_tds_l"
     case fileStoreWriteFailed = "m_d_fswf"
+    case privacyConfigurationReloadFailed = "m_d_pc_r"
+    case privacyConfigurationParseFailed = "m_d_pc_p"
+    case privacyConfigurationCouldNotBeLoaded = "m_d_pc_l"
     
     case contentBlockingTDSCompilationFailed = "m_d_cb_ct"
     case contentBlockingTempListCompilationFailed = "m_d_cb_cl"
@@ -240,6 +237,8 @@ public struct PixelParameters {
     public static let tabPreviewCountDelta = "cd"
     
     public static let etag = "et"
+
+    public static let emailCohort = "cohort"
 }
 
 public struct PixelValues {
@@ -262,6 +261,7 @@ public class Pixel {
                             forDeviceType deviceType: UIUserInterfaceIdiom? = UIDevice.current.userInterfaceIdiom,
                             withAdditionalParameters params: [String: String] = [:],
                             withHeaders headers: HTTPHeaders = APIHeaders().defaultHeaders,
+                            includeATB: Bool = true,
                             onComplete: @escaping (Error?) -> Void = {_ in }) {
         
         var newParams = params
@@ -273,9 +273,9 @@ public class Pixel {
         let url: URL
         if let deviceType = deviceType {
             let formFactor = deviceType == .pad ? Constants.tablet : Constants.phone
-            url = appUrls.pixelUrl(forPixelNamed: pixel.rawValue, formFactor: formFactor)
+            url = appUrls.pixelUrl(forPixelNamed: pixel.rawValue, formFactor: formFactor, includeATB: includeATB)
         } else {
-            url = appUrls.pixelUrl(forPixelNamed: pixel.rawValue)
+            url = appUrls.pixelUrl(forPixelNamed: pixel.rawValue, includeATB: includeATB)
         }
         
         APIRequest.request(url: url, parameters: newParams, headers: headers, callBackOnMainThread: true) { (_, error) in

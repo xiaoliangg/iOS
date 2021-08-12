@@ -102,7 +102,7 @@ public class TrackerDataManager {
             result = .downloaded
             
             do {
-                // This maigh fail if the downloaded data is corrupt or format has changed unexpectedly
+                // This might fail if the downloaded data is corrupt or format has changed unexpectedly
                 let data = try JSONDecoder().decode(TrackerData.self, from: data)
                 fetchedData = (data, etag)
             } catch {
