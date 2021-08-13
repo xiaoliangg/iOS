@@ -24,8 +24,8 @@ extension WKWebViewConfiguration {
 
     private static var sharedProcessPool = WKProcessPool()
 
+    // Should really change this to be thread safe
     public static func regenerateProcessPool() {
-        os_log("Regenerating WKProcessPool", log: webviewLog, type: .debug)
         sharedProcessPool = WKProcessPool()
         os_log("Regenerated WKProcessPool", log: webviewLog, type: .debug)
     }
