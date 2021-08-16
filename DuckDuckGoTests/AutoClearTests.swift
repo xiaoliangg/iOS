@@ -33,7 +33,7 @@ class AutoClearTests: XCTestCase {
             clearNavigationStackInvocationCount += 1
         }
         
-        func forgetData() {
+        func forgetData(completion: (() -> Void)?) {
             forgetDataInvocationCount += 1
         }
         
