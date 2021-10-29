@@ -89,7 +89,8 @@ class DiagnosticReportDataSource: UIActivityItemProvider {
                       imageCacheReport(),
                       fireproofingReport(),
                       configurationReport(),
-                      cookiesReport()].joined(separator: "\n\n")
+                      cookiesReport(),
+                      eventLogReport()].joined(separator: "\n\n")
 
         delegate?.dataGatheringComplete()
         return report
@@ -158,6 +159,11 @@ class DiagnosticReportDataSource: UIActivityItemProvider {
             .map { $0.debugString }
 
         return (["## Cookie Report"] + timeout + processedCookies).joined(separator: "\n")
+    }
+    
+    func eventLogReport() -> String {
+        let eventLog = DebugLogger.shared.dump()
+        return ["## Event log", eventLog].joined(separator: "\n")
     }
 
     func tabsReport() -> String {
