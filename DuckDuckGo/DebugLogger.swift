@@ -37,11 +37,12 @@ public class DebugLogger {
     }
     
     public func log(_ message: String = "",
-             path: String = #file,
-             function: String = #function) {
+                    path: String = #file,
+                    function: String = #function,
+                    line: Int = #line) {
         let fileName = fileName(at: path)
         
-        var messageComponents = ["\(fileName)", "\(function)"]
+        var messageComponents = ["\(fileName)", "\(function):\(line)"]
         
         if !message.isEmpty {
             messageComponents.append("|")
