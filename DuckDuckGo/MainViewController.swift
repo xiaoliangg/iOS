@@ -118,7 +118,9 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+            
+        DebugLogger.shared.log()
+        
         Favicons.shared.migrateIfNeeded {
             DispatchQueue.main.async {
                 self.homeController?.collectionView.reloadData()
@@ -589,12 +591,16 @@ class MainViewController: UIViewController {
     }
 
     private func addTab(url: URL?) {
+        DebugLogger.shared.log("url: \(String(describing: url?.host))")
+        
         let tab = tabManager.add(url: url)
         dismissOmniBar()
         addToView(tab: tab)
     }
 
     func select(tabAt index: Int) {
+        DebugLogger.shared.log("tabAtIndex:\(index)")
+        
         customNavigationBar.alpha = 1
         allowContentUnderflow = false
         let tab = tabManager.select(tabAt: index)
@@ -872,6 +878,8 @@ class MainViewController: UIViewController {
     }
 
     func newTab(reuseExisting: Bool = false) {
+        DebugLogger.shared.log()
+        
         if DaxDialogs.shared.shouldShowFireButtonPulse {
             ViewHighlighter.hideAll()
         }
@@ -1249,6 +1257,7 @@ extension MainViewController: TabDelegate {
              didRequestNewWebViewWithConfiguration configuration: WKWebViewConfiguration,
              for navigationAction: WKNavigationAction) -> WKWebView? {
 
+        DebugLogger.shared.log()
         showBars()
         currentTab?.dismiss()
 
@@ -1264,6 +1273,7 @@ extension MainViewController: TabDelegate {
     }
 
     func tabDidRequestClose(_ tab: TabViewController) {
+        DebugLogger.shared.log()
         closeTab(tab.tabModel)
     }
 
@@ -1352,6 +1362,7 @@ extension MainViewController: TabDelegate {
     }
     
     func tabDidRequestForgetAll(tab: TabViewController) {
+        DebugLogger.shared.log()
         forgetAllWithAnimation(showNextDaxDialog: true)
     }
     
@@ -1540,6 +1551,7 @@ extension MainViewController: AutoClearWorker {
     }
     
     func forgetTabs() {
+        DebugLogger.shared.log()
         DaxDialogs.shared.resumeRegularFlow()
         findInPageView?.done()
         tabManager.removeAll()
@@ -1550,6 +1562,7 @@ extension MainViewController: AutoClearWorker {
     }
     
     func forgetData() {
+        DebugLogger.shared.log("start")
         findInPageView?.done()
         
         ServerTrustCache.shared.clear()
@@ -1559,9 +1572,11 @@ extension MainViewController: AutoClearWorker {
         WebCacheManager.shared.clear {
             pixel.fire(withAdditionalParmaeters: [PixelParameters.tabCount: "\(self.tabManager.count)"])
         }
+        DebugLogger.shared.log("finish")
     }
     
     func forgetAllWithAnimation(transitionCompletion: (() -> Void)? = nil, showNextDaxDialog: Bool = false) {
+        DebugLogger.shared.log()
         let spid = Instruments.shared.startTimedEvent(.clearingData)
         Pixel.fire(pixel: .forgetAllExecuted)
         

@@ -34,6 +34,7 @@ public class ServerTrustCache {
     }
 
     public func clear() {
+        DebugLogger.shared.log()
         cache.removeAll()
     }
 

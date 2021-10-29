@@ -52,6 +52,7 @@ public class WebCacheManager {
     public func consumeCookies(cookieStorage: CookieStorage = CookieStorage(),
                                httpCookieStore: WebCacheManagerCookieStore? = WKWebsiteDataStore.default().cookieStore,
                                completion: @escaping () -> Void) {
+        DebugLogger.shared.log("- start -")
         
         guard let httpCookieStore = httpCookieStore else {
             completion()
@@ -61,24 +62,40 @@ public class WebCacheManager {
         let cookies = cookieStorage.cookies
         
         guard !cookies.isEmpty else {
+            DebugLogger.shared.log(" cookieStorage empty")
+            DebugLogger.shared.log("- finish-")
             completion()
             return
         }
         
         let group = DispatchGroup()
         
+        DebugLogger.shared.log(" cookies count: \(cookies.count)")
+        let oldCookies = HTTPCookieStorage.shared.cookies ?? []
+        DebugLogger.shared.log(" HTTPCookieStorage count: \(oldCookies.count)")
+        
+        var cookieCounter = 0
         for cookie in cookies {
             group.enter()
-            httpCookieStore.setCookie(cookie) {
+            DebugLogger.shared.log(" -consuming cookie #\(cookieCounter) for domain: \(cookie.domain) \(cookie.name)")
+            let domain = cookie.domain
+            httpCookieStore.setCookie(cookie) { [cookieCounter, domain] in
+                DebugLogger.shared.log(" -succesfully consumed cookie #\(cookieCounter) in domain: \(domain)")
                 group.leave()
             }
+            
+            cookieCounter += 1
         }
         
         DispatchQueue.global(qos: .userInitiated).async {
             group.wait()
             
             DispatchQueue.main.async {
+                DebugLogger.shared.log(" attempting to clear cookie storage")
+                
                 cookieStorage.clear()
+                
+                DebugLogger.shared.log("- finish-")
                 completion()
             }
         }
@@ -87,7 +104,8 @@ public class WebCacheManager {
     public func removeCookies(forDomains domains: [String],
                               dataStore: WebCacheManagerDataStore = WKWebsiteDataStore.default(),
                               completion: @escaping () -> Void) {
-
+        DebugLogger.shared.log()
+        
         guard let cookieStore = dataStore.cookieStore else {
             completion()
             return
@@ -124,7 +142,8 @@ public class WebCacheManager {
     public func clear(dataStore: WebCacheManagerDataStore = WKWebsiteDataStore.default(),
                       logins: PreserveLogins = PreserveLogins.shared,
                       completion: @escaping () -> Void) {
-
+        DebugLogger.shared.log("- start -")
+        
         dataStore.removeAllDataExceptCookies {
             guard let cookieStore = dataStore.cookieStore else {
                 completion()
@@ -134,29 +153,52 @@ public class WebCacheManager {
             cookieStore.getAllCookies { cookies in
                 let group = DispatchGroup()
                 let cookiesToRemove = cookies.filter { !logins.isAllowed(cookieDomain: $0.domain) && $0.domain != Constants.cookieDomain }
-
+                
+                DebugLogger.shared.log(" cookies count: \(cookies.count)")
+                let oldCookies = HTTPCookieStorage.shared.cookies ?? []
+                DebugLogger.shared.log(" HTTPCookieStorage count: \(oldCookies.count)")
+            
+                DebugLogger.shared.log(" cookies for removal: \(cookiesToRemove.count)")
+                DebugLogger.shared.log(" protected domains: \(logins.allowedDomains)")
+                
+                var cookieCounter = 0
+                
                 for cookie in cookiesToRemove {
                     group.enter()
-                    cookieStore.delete(cookie) {
+                    DebugLogger.shared.log(" -deleting cookie #\(cookieCounter) for domain: \(cookie.domain) \(cookie.name)")
+                    
+                    let domain = cookie.domain
+                    cookieStore.delete(cookie) { [cookieCounter, domain] in
+                        DebugLogger.shared.log(" -succesfully deleted cookie #\(cookieCounter) in domain: \(domain)")
                         group.leave()
                     }
+                    
+                    cookieCounter += 1
                 }
 
                 DispatchQueue.global(qos: .userInitiated).async {
                     let result = group.wait(timeout: .now() + 5)
 
                     if result == .timedOut {
+                        DebugLogger.shared.log(" !cookie removal timed out!")
                         Pixel.fire(pixel: .cookieDeletionTimedOut, withAdditionalParameters: [
                             PixelParameters.clearWebDataTimedOut: "1"
                         ])
                     }
 
                     DispatchQueue.main.async {
+                        DebugLogger.shared.log("- finish -")
                         completion()
+                        
+                        cookieStore.getAllCookies { cookies in
+                            DebugLogger.shared.log(" cookies count: \(cookies.count)")
+                            DebugLogger.shared.log(" HTTPCookieStorage count: \(oldCookies.count)")
+                        }
                     }
                 }
             }
         }
+        
     }
 
     /// The Fire Button does not delete the user's DuckDuckGo search settings, which are saved as cookies. Removing these cookies would reset them and have undesired

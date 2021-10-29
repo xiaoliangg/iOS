@@ -32,6 +32,7 @@ public class CookieStorage {
 
         var storedCookies = [HTTPCookie]()
         if let cookies = userDefaults.object(forKey: Constants.key) as? [[String: Any?]] {
+            DebugLogger.shared.log("stored cookies count: \(cookies.count)")
             for cookieData in cookies {
                 var properties = [HTTPCookiePropertyKey: Any]()
                 cookieData.forEach({
@@ -53,8 +54,18 @@ public class CookieStorage {
     }
 
     func clear() {
+        DebugLogger.shared.log()
+        
+        if let cookies = userDefaults.object(forKey: Constants.key) as? [[String: Any?]] {
+            DebugLogger.shared.log(" -before count: \(cookies.count)")
+        }
+        
         userDefaults.removeObject(forKey: Constants.key)
         os_log("cleared cookies", log: generalLog, type: .debug)
+        
+        if let cookies = userDefaults.object(forKey: Constants.key) as? [[String: Any?]] {
+            DebugLogger.shared.log(" -after count: \(cookies.count)")
+        }
     }
 
 }

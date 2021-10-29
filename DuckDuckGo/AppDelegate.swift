@@ -53,6 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: lifecycle
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        DebugLogger.shared.log()
+        
         #if targetEnvironment(simulator)
         if ProcessInfo.processInfo.environment["UITESTING"] == "true" {
             // Disable hardware keyboards.
@@ -138,6 +140,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        DebugLogger.shared.log()
         guard !testing else { return }
 
         if !(overlayWindow?.rootViewController is AuthenticationViewController) {
@@ -234,6 +237,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        DebugLogger.shared.log()
         ThemeManager.shared.updateUserInterfaceStyle()
 
         beginAuthentication()
@@ -242,6 +246,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        DebugLogger.shared.log()
+        
+        print("---")
+        print(DebugLogger.shared.dump())
+        print("---")
+        
         displayBlankSnapshotWindow()
         autoClear?.applicationDidEnterBackground()
         lastBackgroundDate = Date()
@@ -254,6 +264,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        DebugLogger.shared.log()
         os_log("App launched with url %s", log: lifecycleLog, type: .debug, url.absoluteString)
         mainViewController?.clearNavigationStack()
         autoClear?.applicationWillMoveToForeground()

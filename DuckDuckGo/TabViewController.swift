@@ -195,8 +195,9 @@ class TabViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         tabModel = Tab(link: nil)
         super.init(coder: aDecoder)
+        DebugLogger.shared.log(self.debugDescription)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -278,6 +279,8 @@ class TabViewController: UIViewController {
     // The `consumeCookies` is legacy behaviour from the previous Fireproofing implementation. Cookies no longer need to be consumed after invocations
     // of the Fire button, but the app still does so in the event that previously persisted cookies have not yet been consumed.
     func attachWebView(configuration: WKWebViewConfiguration, andLoadRequest request: URLRequest?, consumeCookies: Bool) {
+        DebugLogger.shared.log("consumeCookies: \(consumeCookies)")
+        
         instrumentation.willPrepareWebView()
         webView = WKWebView(frame: view.bounds, configuration: configuration)
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -327,6 +330,8 @@ class TabViewController: UIViewController {
     }
 
     private func consumeCookiesThenLoadRequest(_ request: URLRequest?) {
+        DebugLogger.shared.log()
+        
         webView.configuration.websiteDataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { _ in
             WebCacheManager.shared.consumeCookies { [weak self] in
                 guard let strongSelf = self else { return }
@@ -398,6 +403,7 @@ class TabViewController: UIViewController {
     }
     
     func webViewUrlHasChanged() {
+        DebugLogger.shared.log()
         if url == nil {
             url = webView.url
         } else if let currentHost = url?.host, let newHost = webView.url?.host, currentHost == newHost {
