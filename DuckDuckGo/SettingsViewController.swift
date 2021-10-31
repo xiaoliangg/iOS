@@ -112,7 +112,7 @@ class SettingsViewController: UITableViewController {
     }
 
     private func configureVersionCell() {
-        versionCell.isUserInteractionEnabled = isDebugBuild
+//        versionCell.isUserInteractionEnabled = isDebugBuild
     }
 
     private func configureDefaultBroswerCell() {
