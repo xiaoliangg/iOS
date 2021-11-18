@@ -19,6 +19,7 @@
 
 import Foundation
 import SafariServices
+import BrowserServicesKit
 
 public class DomainsProtectionUserDefaultsStore: DomainsProtectionStore {
 
@@ -65,7 +66,7 @@ public class DomainsProtectionUserDefaultsStore: DomainsProtectionStore {
     }
 
     private func onStoreChanged() {
-        ContentBlockerRulesManager.shared.recompile()
+        AppContentBlocking.contentBlockingRulesManager.recompile()
     }
 
 }

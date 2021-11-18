@@ -41,11 +41,11 @@ public protocol SurrogatesUserScriptConfigSource {
 public class DefaultSurrogatesUserScriptConfigSource: SurrogatesUserScriptConfigSource {
 
     public var privacyConfig: PrivacyConfiguration {
-        return PrivacyConfigurationManager.shared.privacyConfig
+        return AppContentBlocking.privacyConfigurationManager.privacyConfig
     }
 
     public var encodedTrackerData: String? {
-        return ContentBlockerRulesManager.shared.currentRules?.encodedTrackerData
+        return AppContentBlocking.contentBlockingRulesManager.currentRules?.encodedTrackerData
     }
 
     private var cachedSurrogatesETag = ""
@@ -143,7 +143,7 @@ public class SurrogatesUserScript: NSObject, UserScript {
     }
             
     private func trackerFromUrl(_ urlString: String, pageUrlString: String, _ blocked: Bool) -> DetectedTracker {
-        let currentTrackerData = ContentBlockerRulesManager.shared.currentRules?.trackerData
+        let currentTrackerData = AppContentBlocking.contentBlockingRulesManager.currentRules?.trackerData
         let knownTracker = currentTrackerData?.findTracker(forUrl: urlString)
         let entity = currentTrackerData?.findEntity(byName: knownTracker?.owner?.name ?? "")
         return DetectedTracker(url: urlString, knownTracker: knownTracker, entity: entity, blocked: blocked, pageUrl: pageUrlString)

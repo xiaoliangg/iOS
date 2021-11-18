@@ -20,6 +20,7 @@
 import XCTest
 @testable import Core
 import TrackerRadarKit
+import BrowserServicesKit
 
 // swiftlint:disable file_length
 
@@ -178,7 +179,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
                                                        embeddedTrackerData: Self.fakeEmbeddedDataSet)
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -202,7 +203,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
                                                        embeddedTrackerData: Self.fakeEmbeddedDataSet)
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -229,7 +230,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -257,7 +258,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -289,7 +290,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -325,7 +326,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -360,7 +361,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
 
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
 
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
 
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -396,7 +397,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
 
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
 
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
 
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -436,7 +437,7 @@ class ContentBlockerRulesManagerLoadingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                               object: cbrm,
@@ -482,7 +483,7 @@ class ContentBlockerRulesManagerUpdatingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let initialLoading = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                                          object: cbrm,
@@ -533,7 +534,7 @@ class ContentBlockerRulesManagerUpdatingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let initialLoading = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                                          object: cbrm,
@@ -585,7 +586,7 @@ class ContentBlockerRulesManagerUpdatingTests: ContentBlockerRulesManagerTests {
 
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
 
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
 
         let initialLoading = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                                          object: cbrm,
@@ -638,7 +639,7 @@ class ContentBlockerRulesManagerUpdatingTests: ContentBlockerRulesManagerTests {
         
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
         
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
         
         let initialLoading = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                                          object: cbrm,
@@ -690,7 +691,7 @@ class ContentBlockerRulesManagerUpdatingTests: ContentBlockerRulesManagerTests {
 
         XCTAssertNotEqual(mockSource.trackerData?.etag, mockSource.embeddedTrackerData.etag)
 
-        let cbrm = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+        let cbrm = ContentBlockerRulesManager(source: mockSource, logger: .disabled, skipInitialSetup: false)
 
         let initialLoading = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
                                          object: cbrm,

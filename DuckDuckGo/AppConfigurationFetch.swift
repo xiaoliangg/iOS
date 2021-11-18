@@ -340,7 +340,7 @@ extension AppConfigurationFetch {
 
         queue.async {
             let fetchedNewData = configurationFetcher.fetchConfigurationFiles(isBackground: true)
-            ContentBlockerRulesManager.shared.recompile()
+            AppContentBlocking.contentBlockingRulesManager.recompile()
 
             DispatchQueue.main.async {
                 lastCompletionStatus = backgroundRefreshTaskCompletionHandler(store: store,

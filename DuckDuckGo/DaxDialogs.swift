@@ -20,6 +20,7 @@
 import Foundation
 import Core
 import TrackerRadarKit
+import BrowserServicesKit
 
 class DaxDialogs {
     
@@ -270,7 +271,7 @@ class DaxDialogs {
     
     private func majorTrackerMessage(_ host: String) -> DaxDialogs.BrowsingSpec? {
         guard !settings.browsingMajorTrackingSiteShown else { return nil }
-        guard let currentTrackerData = ContentBlockerRulesManager.shared.currentRules?.trackerData,
+        guard let currentTrackerData = AppContentBlocking.contentBlockingRulesManager.currentRules?.trackerData,
               let entity = currentTrackerData.findEntity(forHost: host),
             let entityName = entity.displayName else { return nil }
         settings.browsingMajorTrackingSiteShown = true
@@ -318,7 +319,7 @@ class DaxDialogs {
     }
     
     private func isOwnedByFacebookOrGoogle(_ host: String) -> Entity? {
-        guard let currentTrackerData = ContentBlockerRulesManager.shared.currentRules?.trackerData,
+        guard let currentTrackerData = AppContentBlocking.contentBlockingRulesManager.currentRules?.trackerData,
               let entity = currentTrackerData.findEntity(forHost: host) else { return nil }
         return entity.domains?.contains(where: { MajorTrackers.domains.contains($0) }) ?? false ? entity : nil
     }

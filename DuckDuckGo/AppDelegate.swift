@@ -163,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         AppConfigurationFetch().start { newData in
             if newData {
-                ContentBlockerRulesManager.shared.recompile()
+                AppContentBlocking.contentBlockingRulesManager.recompile()
             }
         }
 

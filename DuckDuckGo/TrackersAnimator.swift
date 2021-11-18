@@ -125,7 +125,7 @@ class TrackersAnimator {
                           options: .transitionCrossDissolve,
                           animations: {
                             omniBar.siteRatingView.mode = .ready
-                            omniBar.siteRatingView.refresh(with: PrivacyConfigurationManager.shared.privacyConfig)
+                            omniBar.siteRatingView.refresh(with: AppContentBlocking.privacyConfigurationManager.privacyConfig)
         })
     }
     

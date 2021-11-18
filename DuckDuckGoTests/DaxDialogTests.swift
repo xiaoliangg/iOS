@@ -20,6 +20,7 @@
 import XCTest
 @testable import DuckDuckGo
 @testable import Core
+import BrowserServicesKit
 
 class DaxDialogTests: XCTestCase {
     
@@ -43,20 +44,21 @@ class DaxDialogTests: XCTestCase {
     override func setUp() {
         super.setUp()
         UserDefaults.clearStandard()
-        
+
         if let cbrl = Self.rulesManager {
-            // ensure we use the embedded version
-            try? FileManager.default.removeItem(at: FileStore().persistenceLocation(forConfiguration: .trackerDataSet))
-            
-            ContentBlockerRulesManager.test_replaceSharedInstance(with: cbrl)
+//            // ensure we use the embedded version
+//            try? FileManager.default.removeItem(at: FileStore().persistenceLocation(forConfiguration: .trackerDataSet))
+
+            AppContentBlocking.contentBlockingRulesManager = cbrl
         } else {
-            let cbrm = ContentBlockerRulesManager.test_prepareEmbeddedInstance()
-            Self.rulesManager = cbrm
-            
+            AppContentBlocking.trackerDataManager.reload(etag: nil, data: nil)
+            AppContentBlocking.contentBlockingRulesManager.recompile()
+            Self.rulesManager = AppContentBlocking.contentBlockingRulesManager
+
             let exp = expectation(forNotification: ContentBlockerProtectionChangedNotification.name,
-                                  object: cbrm,
+                                  object: Self.rulesManager,
                                   handler: nil)
-    
+
             wait(for: [exp], timeout: 15.0)
         }
     }
@@ -264,7 +266,7 @@ class DaxDialogTests: XCTestCase {
     }
         
     private func detectedTrackerFrom(_ url: URL, pageUrl: String) -> DetectedTracker {
-        let tds = ContentBlockerRulesManager.shared.currentRules?.trackerData
+        let tds = AppContentBlocking.contentBlockingRulesManager.currentRules?.trackerData
         let entity = tds?.findEntity(forHost: url.host!)
         let knownTracker = tds?.findTracker(forUrl: url.absoluteString)
         return DetectedTracker(url: url.absoluteString,

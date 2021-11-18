@@ -60,9 +60,9 @@ class TrackerAllowlistReferenceTests: XCTestCase {
                       schemeHandler: TestSchemeHandler,
                       completion: @escaping (WKWebView) -> Void) {
 
-        let mockSource = MockContentBlockerRulesSource(trackerData: nil,
-                                                       embeddedTrackerData: (trackerData, UUID().uuidString) )
-        _ = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+//        let mockSource = MockContentBlockerRulesSource(trackerData: nil,
+//                                                       embeddedTrackerData: (trackerData, UUID().uuidString) )
+//        _ = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
 
         let exceptions = DefaultContentBlockerRulesSource.transform(allowList: trackerAllowlist)
 

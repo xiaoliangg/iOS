@@ -21,6 +21,7 @@ import Foundation
 
 import XCTest
 @testable import Core
+import BrowserServicesKit
 
 class HashExtensionTest: XCTestCase {
     

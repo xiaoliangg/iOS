@@ -618,8 +618,8 @@ class TabViewController: UIViewController {
     }
     
     @objc func onContentBlockerConfigurationChanged(notification: Notification) {
-        if let rules = ContentBlockerRulesManager.shared.currentRules,
-           PrivacyConfigurationManager.shared.privacyConfig.isEnabled(featureKey: .contentBlocking) {
+        if let rules = AppContentBlocking.contentBlockingRulesManager.currentRules,
+           AppContentBlocking.privacyConfigurationManager.privacyConfig.isEnabled(featureKey: .contentBlocking) {
             self.webView.configuration.userContentController.removeAllContentRuleLists()
             self.webView.configuration.userContentController.add(rules.rulesList)
             
@@ -777,7 +777,7 @@ class TabViewController: UIViewController {
                               blockedTrackerDomains: blockedTrackerDomains,
                               installedSurrogates: siteRating?.installedSurrogates.map {$0} ?? [],
                               isDesktop: tabModel.isDesktop,
-                              tdsETag: ContentBlockerRulesManager.shared.currentRules?.etag ?? "")
+                              tdsETag: AppContentBlocking.contentBlockingRulesManager.currentRules?.etag ?? "")
     }
     
     public func print() {
@@ -1060,14 +1060,14 @@ extension TabViewController: WKNavigationDelegate {
         
         var request = incomingRequest
         // Add Do Not sell header if needed
-        let config = PrivacyConfigurationManager.shared.privacyConfig
+        let config = AppContentBlocking.privacyConfigurationManager.privacyConfig
         let domain = incomingRequest.url?.host
         let urlAllowed = !config.isInExceptionList(domain: domain, forFeature: .gpc)
                             && !config.isUserUnprotected(domain: domain)
                             && !config.isTempUnprotected(domain: domain)
         
         if appSettings.sendDoNotSell
-            && PrivacyConfigurationManager.shared.privacyConfig.isEnabled(featureKey: .gpc)
+            && AppContentBlocking.privacyConfigurationManager.privacyConfig.isEnabled(featureKey: .gpc)
             && urlAllowed {
             if let headers = request.allHTTPHeaderFields,
                headers.firstIndex(where: { $0.key == Constants.secGPCHeader }) == nil {
@@ -1209,7 +1209,7 @@ extension TabViewController: WKNavigationDelegate {
             }
         }
         
-        if !PrivacyConfigurationManager.shared.privacyConfig.isProtected(domain: url.host) {
+        if !AppContentBlocking.privacyConfigurationManager.privacyConfig.isProtected(domain: url.host) {
             completion(allowPolicy)
             return
         }

@@ -20,6 +20,7 @@
 import XCTest
 @testable import Core
 @testable import DuckDuckGo
+import BrowserServicesKit
 
 class ContentBlockerRulesIdentifierTests: XCTestCase {
     

@@ -124,9 +124,9 @@ class SurrogatesUserScriptsTests: XCTestCase {
                                                privacyConfig: PrivacyConfiguration,
                                                completion: @escaping (WKWebView) -> Void) {
 
-        let mockSource = MockContentBlockerRulesSource(trackerData: nil,
-                                                       embeddedTrackerData: (trackerData, UUID().uuidString) )
-        _ = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
+//        let mockSource = MockContentBlockerRulesSource(trackerData: nil,
+//                                                       embeddedTrackerData: (trackerData, UUID().uuidString) )
+//        _ = ContentBlockerRulesManager.test_prepareRegularInstance(source: mockSource, skipInitialSetup: false)
 
         var tempUnprotected = privacyConfig.tempUnprotectedDomains.filter { !$0.trimWhitespace().isEmpty }
         tempUnprotected.append(contentsOf: privacyConfig.exceptionsList(forFeature: .contentBlocking))

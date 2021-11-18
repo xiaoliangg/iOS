@@ -19,6 +19,7 @@
 
 import UIKit
 import Core
+import BrowserServicesKit
 
 class PrivacyProtectionTrackerNetworksController: UIViewController {
 
@@ -30,7 +31,7 @@ class PrivacyProtectionTrackerNetworksController: UIViewController {
     @IBOutlet weak var backButton: UIButton!
 
     private var siteRating: SiteRating!
-    private var privacyConfig: PrivacyConfiguration = PrivacyConfigurationManager.shared.privacyConfig
+    private var privacyConfig: PrivacyConfiguration = AppContentBlocking.privacyConfigurationManager.privacyConfig
 
     struct Section {
 
@@ -82,7 +83,7 @@ class PrivacyProtectionTrackerNetworksController: UIViewController {
     private func trackers() -> [DetectedTracker] {
         var protecting = siteRating.protecting(privacyConfig)
         if privacyConfig.isTempUnprotected(domain: siteRating.domain) ||
-            privacyConfig.isInExceptionList(domain: siteRating.domain, forFeature: .contentBlocking) {
+            privacyConfig.isInExceptionList(domain: siteRating.domain, forFeature: PrivacyFeature.contentBlocking) {
             protecting = false
         }
         

@@ -22,6 +22,7 @@ import WebKit
 import Core
 import Lottie
 import Kingfisher
+import BrowserServicesKit
 
 // swiftlint:disable type_body_length
 // swiftlint:disable file_length
@@ -677,7 +678,7 @@ class MainViewController: UIViewController {
     }
     
     private func updateSiteRating(_ siteRating: SiteRating?) {
-        omniBar.updateSiteRating(siteRating, with: PrivacyConfigurationManager.shared.privacyConfig)
+        omniBar.updateSiteRating(siteRating, with: AppContentBlocking.privacyConfigurationManager.privacyConfig)
     }
 
     func dismissOmniBar() {

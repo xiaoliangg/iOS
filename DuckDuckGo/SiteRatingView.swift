@@ -18,7 +18,7 @@
 //
 
 import Foundation
-
+import BrowserServicesKit
 import UIKit
 import Core
 

@@ -39,11 +39,11 @@ public protocol ContentBlockerUserScriptConfigSource {
 public class DefaultUserScriptConfigSource: ContentBlockerUserScriptConfigSource {
 
     public var privacyConfig: PrivacyConfiguration {
-        return PrivacyConfigurationManager.shared.privacyConfig
+        return AppContentBlocking.privacyConfigurationManager.privacyConfig
     }
 
     public var trackerData: TrackerData? {
-        return ContentBlockerRulesManager.shared.currentRules?.trackerData
+        return AppContentBlocking.contentBlockingRulesManager.currentRules?.trackerData
     }
 }
 
@@ -91,7 +91,7 @@ public class ContentBlockerRulesUserScript: NSObject, UserScript {
     public weak var delegate: ContentBlockerRulesUserScriptDelegate?
     public weak var storageCache: StorageCache? {
         didSet {
-            let privacyConfiguration = PrivacyConfigurationManager.shared.privacyConfig
+            let privacyConfiguration = AppContentBlocking.privacyConfigurationManager.privacyConfig
             temporaryUnprotectedDomains = privacyConfiguration.tempUnprotectedDomains.filter { !$0.trimWhitespace().isEmpty }
             temporaryUnprotectedDomains.append(contentsOf: privacyConfiguration.exceptionsList(forFeature: .contentBlocking))
         }
