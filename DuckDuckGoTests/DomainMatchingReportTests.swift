@@ -18,6 +18,7 @@
 //
 
 import XCTest
+import BrowserServicesKit
 @testable import TrackerRadarKit
 @testable import Core
 import Foundation

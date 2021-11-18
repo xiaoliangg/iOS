@@ -159,7 +159,7 @@ class TabViewController: UIViewController {
     private var faviconScript = FaviconUserScript()
     private var loginFormDetectionScript = LoginFormDetectionUserScript()
     private var surrogatesScript = SurrogatesUserScript()
-    private var contentBlockerRulesScript = ContentBlockerRulesUserScript()
+    private var contentBlockerRulesScript = ContentBlockerRulesUserScript(configurationSource: DefaultUserScriptConfigSource())
     private var fingerprintScript = FingerprintUserScript()
     private var navigatorPatchScript = NavigatorSharePatchUserScript()
     private var doNotSellScript = DoNotSellUserScript()
@@ -258,7 +258,6 @@ class TabViewController: UIViewController {
         debugScript.instrumentation = instrumentation
         surrogatesScript.delegate = self
         contentBlockerRulesScript.delegate = self
-        contentBlockerRulesScript.storageCache = storageCache
         autofillUserScript.emailDelegate = emailManager
         printingUserScript.delegate = self
     }
