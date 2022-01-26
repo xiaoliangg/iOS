@@ -3,6 +3,8 @@
 set -e # Fail if any command fails
 set -x # Debug log
 
+pwd
+
 DIRECTORY_NAME=XcodeCloudResources
 
 git clone "$XCODE_CLOUD_RESOURCES_URL" $DIRECTORY_NAME
