@@ -6,7 +6,7 @@ set -x # Debug log
 if [[ -z "${CI_PRIMARY_REPOSITORY_PATH}" ]]; then
   echo "Running CI script locally"
 else
-  pushd $CI_PRIMARY_REPOSITORY_PATH
+  pushd "$CI_PRIMARY_REPOSITORY_PATH"
 fi
 
 DIRECTORY_NAME=XcodeCloudResources
