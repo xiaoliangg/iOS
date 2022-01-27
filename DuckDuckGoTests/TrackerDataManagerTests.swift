@@ -109,6 +109,12 @@ class TrackerDataManagerTests: XCTestCase {
 
     }
     // swiftlint:enable function_body_length
+    
+    func testWhenEmbeddedDataIsCompiledThenItSucceeds() {
+        
+        let hash = calculateHash(for: TrackerDataManager.embeddedUrl)
+        XCTAssertEqual(hash, TrackerDataManager.Constants.embeddedDataSetSHA, "Error: please update SHA and ETag when changing embedded TDS")
+    }
         
     func testWhenEmbeddedDataIsUpdatedThenUpdateSHAAndEtag() {
         
