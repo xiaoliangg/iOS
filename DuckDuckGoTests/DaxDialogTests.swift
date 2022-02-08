@@ -42,6 +42,7 @@ class DaxDialogTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        UserDefaults.app = UserDefaults(suiteName: #file)!
         UserDefaults.clearStandard()
         
         if let cbrl = Self.rulesManager {

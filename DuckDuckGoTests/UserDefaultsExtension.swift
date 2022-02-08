@@ -21,20 +21,18 @@ import Foundation
 @testable import Core
 
 extension UserDefaults {
-
+    static let testBundleID = "com.duckduckgo.mobile.test.ios"
+    
     static func clearStandard() {
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-        }
+        UserDefaults.app.removePersistentDomain(forName: testBundleID)
     }
-
 }
 
 extension UserDefaultsWrapper {
     
     public static func clearAll() {
         Key.allCases.forEach { key in
-            UserDefaults.standard.removeObject(forKey: key.rawValue)
+            UserDefaults.app.removeObject(forKey: key.rawValue)
         }
     }
     

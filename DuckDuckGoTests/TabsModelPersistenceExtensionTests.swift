@@ -31,7 +31,7 @@ class TabsModelPersistenceExtensionTests: XCTestCase {
     }
 
     override func setUp() {
-        UserDefaults.standard.removeObject(forKey: "com.duckduckgo.opentabs")
+        UserDefaults.app.removeObject(forKey: "com.duckduckgo.opentabs")
     }
 
     private var firstTab: Tab {

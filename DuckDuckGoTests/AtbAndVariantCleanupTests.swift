@@ -36,6 +36,7 @@ class AtbAndVariantCleanupTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        UserDefaults.app = UserDefaults(suiteName: #file)!
         UserDefaults.clearStandard()
     }
 

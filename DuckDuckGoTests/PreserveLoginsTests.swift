@@ -23,6 +23,7 @@ import XCTest
 class PreserveLoginsTests: XCTestCase {
     
     override func setUp() {
+        UserDefaults.app = UserDefaults(suiteName: #file)!
         UserDefaultsWrapper<Any>.clearAll()
     }
     
@@ -34,11 +35,11 @@ class PreserveLoginsTests: XCTestCase {
     }
 
     func testWhenLegacyAllowedDomainsThenMigratedAndCleared() {
-        UserDefaults.standard.set(["domain1.com"], forKey: UserDefaultsWrapper<Any>.Key.preserveLoginsLegacyAllowedDomains.rawValue)
+        UserDefaults.app.set(["domain1.com"], forKey: UserDefaultsWrapper<Any>.Key.preserveLoginsLegacyAllowedDomains.rawValue)
         let logins = PreserveLogins()
         XCTAssertEqual(["domain1.com"], logins.legacyAllowedDomains)
         logins.clearLegacyAllowedDomains()
-        XCTAssertNil(UserDefaults.standard.object(forKey: UserDefaultsWrapper<Any>.Key.preserveLoginsLegacyAllowedDomains.rawValue))
+        XCTAssertNil(UserDefaults.app.object(forKey: UserDefaultsWrapper<Any>.Key.preserveLoginsLegacyAllowedDomains.rawValue))
     }
     
     func testWhenNewThenAllowedDomainsIsEmpty() {
