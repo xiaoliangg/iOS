@@ -5,9 +5,9 @@
         "package": "BrowserServicesKit",
         "repositoryURL": "https://github.com/duckduckgo/BrowserServicesKit.git",
         "state": {
-          "branch": null,
-          "revision": "183d4ac1258681724263e2b1d9cd2b65165ff43b",
-          "version": "10.0.1"
+          "branch": "abrown/provide-user-data-email-app",
+          "revision": "4bbb9c12ff1ab2a868e61dbd0d6bd875e42c4963",
+          "version": null
         }
       },
       {
