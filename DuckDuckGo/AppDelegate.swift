@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // swiftlint:enable type_body_length
 
     private static let ShowKeyboardOnLaunchThreshold = TimeInterval(20)
-    
+    //yltodo?? 什么意思
     private struct ShortcutKey {
         static let clipboard = "com.duckduckgo.mobile.ios.clipboard"
     }

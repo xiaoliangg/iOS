@@ -26,6 +26,13 @@ public let isDebugBuild = false
 #endif
 
 public struct Global {
+    // yl?? 1.这个返回String等方法应该是一个闭包，它的完整写法是什么样的？ 答:初始化对象时写成闭包形式，以便在代码块中写更多的代码
+    // 如下写法可以成功
+//    var test:String = {() ->String in
+//        return "ss"
+//    }()
+
+    // yl 2.DuckDuckGoGroupIdentifierPrefix 关联 info.plist的 GROUP_ID_PREFIX 关联 Configuration/ExternalDeveloper.xcconfig 的属性。最终返回 com.yl2
     public static let groupIdPrefix: String = {
         let groupIdPrefixKey = "DuckDuckGoGroupIdentifierPrefix"
         guard let groupIdPrefix = Bundle.main.object(forInfoDictionaryKey: groupIdPrefixKey) as? String else {

@@ -35,15 +35,21 @@ public class BookmarkUserDefaults: BookmarkStore {
         static let favoritesKey = "com.duckduckgo.bookmarks.favoritesKey"
     }
 
+    // yl UserDefaults介绍:https://www.jianshu.com/p/3796886b4953
     private let userDefaults: UserDefaults
 
     public init(userDefaults: UserDefaults = UserDefaults(suiteName: Constants.groupName)!) {
         self.userDefaults = userDefaults
     }
 
+    // yl!! 此处[]的作用？？ 答: 此处表示Link数组
+    // yl 关联:025 closure:[]定义捕获列表解决闭包的循环引用问题
     public var bookmarks: [Link] {
         get {
             if let data = userDefaults.data(forKey: Keys.bookmarkKey) {
+                // yl let为true时执行括号内语句
+                // 返回 Link 数组:[Link]
+                // 返回书签数组
                 return (try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [Link]) ?? []
             }
             return []
@@ -51,6 +57,7 @@ public class BookmarkUserDefaults: BookmarkStore {
         set(newBookmarks) {
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newBookmarks, requiringSecureCoding: false) else { return }
             userDefaults.set(data, forKey: Keys.bookmarkKey)
+            // yl?? 发送书签变更通知,通知发给谁？作用是什么？
             NotificationCenter.default.post(name: Notifications.bookmarkStoreDidChange, object: self)
         }
     }
@@ -82,9 +89,12 @@ public class BookmarkUserDefaults: BookmarkStore {
     }
 
     public func contains(domain: String) -> Bool {
+        // yl domainMatches 是函数类型
         let domainMatches: (Link) -> Bool = {
             $0.url.host == domain
         }
+        // yl bookmarks数组是否包含domain(Link.url.host==domain)
+        // yl where不是关键字
         return bookmarks.contains(where: domainMatches) || favorites.contains(where: domainMatches)
     }
     

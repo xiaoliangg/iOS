@@ -19,6 +19,7 @@
 
 import Foundation
 
+// yl 书签类型
 public class Link: NSObject, NSCoding {
     
     struct Constants {
